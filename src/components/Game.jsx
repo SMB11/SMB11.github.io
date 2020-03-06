@@ -3,6 +3,7 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import { withStyles } from "@material-ui/core/styles";
 import { Container, Row, Col } from "reactstrap";
+import { Button } from "@material-ui/core";
 
 class Game extends Component {
   state = {
@@ -52,7 +53,7 @@ class Game extends Component {
     let newRow = [];
     oldData.forEach(element => {
       newRow = this.slideUpDown(element, dir);
-      let row = this.combineDown(newRow);
+      this.combineUpDown(newRow, dir);
 
       newData.push(newRow);
     });
@@ -61,14 +62,25 @@ class Game extends Component {
       this.addValue();
     });
   };
-  combineDown = col => {
+  combineUpDown = (col, dir) => {
     //TODO: add direction
-    for (let i = 3; i > 0; i--) {
-      if (col[i] === col[i - 1]) {
-        col[i] = col[i] + col[i - 1];
-        col[i - 1] = 0;
-        console.log(col);
-        break;
+    if (dir === "down") {
+      for (let i = 3; i > 0; i--) {
+        if (col[i] === col[i - 1]) {
+          col[i] = col[i] + col[i - 1];
+          col[i - 1] = 0;
+          console.log(col);
+          break;
+        }
+      }
+    } else if (dir === "up") {
+      for (let i = 0; i < 3; i++) {
+        if (col[i] === col[i + 1]) {
+          col[i] = col[i] + col[i + 1];
+          col[i + 1] = 0;
+          console.log(col);
+          break;
+        }
       }
     }
   };
@@ -100,16 +112,15 @@ class Game extends Component {
           <Row>
             {col.map(row => (
               <Col>
-                <Paper
-                  style={classes.paper}
-                  onClick={() => this.slideUpDownUpdate("down")}
-                >
+                <Paper style={classes.paper}>
                   <h1>{row}</h1>
                 </Paper>
               </Col>
             ))}
           </Row>
         ))}
+        <Button onClick={() => this.slideUpDownUpdate("down")}>Down</Button>
+        <Button onClick={() => this.slideUpDownUpdate("up")}>Up</Button>
       </Container>
     );
   }

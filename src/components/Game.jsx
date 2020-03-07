@@ -47,8 +47,8 @@ class Game extends Component {
     return arr;
   };
 
-  slideUpDownUpdate = dir => {
-    let oldData = this.state.data;
+  slideUpDownUpdate = (data, dir) => {
+    let oldData = data;
     let newData = [];
     let newRow = [];
     oldData.forEach(element => {
@@ -63,7 +63,6 @@ class Game extends Component {
     });
   };
   combineUpDown = (col, dir) => {
-    //TODO: add direction
     if (dir === "down") {
       for (let i = 3; i > 0; i--) {
         if (col[i] === col[i - 1]) {
@@ -83,6 +82,41 @@ class Game extends Component {
         }
       }
     }
+  };
+
+  rotate = matrix => {
+    // function statement
+    const N = matrix.length - 1; // use a constant
+    // use arrow functions and nested map;
+    const result = matrix.map((row, i) =>
+      row.map((val, j) => matrix[N - j][i])
+    );
+    matrix.length = 0; // hold original array reference
+    matrix.push(...result); // Spread operator
+    return matrix;
+  };
+  slideLeftRightUpdate = (data, dir) => {
+    let oldData = data;
+    let rotatedData = this.rotate(oldData);
+    let newData = [];
+    let newRow = [];
+    let finalData = [];
+
+    rotatedData.forEach(element => {
+      newRow = this.slideUpDown(element, dir);
+      this.combineUpDown(newRow, dir);
+
+      newData.push(newRow);
+    });
+    console.log(newData);
+    finalData = this.rotate(newData);
+    finalData = this.rotate(newData);
+    finalData = this.rotate(newData);
+
+    this.setState({ data: finalData }, () => {
+      console.log(finalData);
+      this.addValue();
+    });
   };
 
   render() {
@@ -119,8 +153,22 @@ class Game extends Component {
             ))}
           </Row>
         ))}
-        <Button onClick={() => this.slideUpDownUpdate("down")}>Down</Button>
-        <Button onClick={() => this.slideUpDownUpdate("up")}>Up</Button>
+        <Button onClick={() => this.slideUpDownUpdate(this.state.data, "down")}>
+          Down
+        </Button>
+        <Button onClick={() => this.slideUpDownUpdate(this.state.data, "up")}>
+          Up
+        </Button>
+        <Button
+          onClick={() => this.slideLeftRightUpdate(this.state.data, "down")}
+        >
+          Left
+        </Button>
+        <Button
+          onClick={() => this.slideLeftRightUpdate(this.state.data, "up")}
+        >
+          Right
+        </Button>
       </Container>
     );
   }

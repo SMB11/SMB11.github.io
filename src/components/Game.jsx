@@ -81,11 +81,11 @@ class Game extends Component {
   };
 
   updateScore = () => {
-    let score = this.state.score;
+    let score = 0;
     let data = this.state.data;
     for (let i = 0; i < 4; i++) {
       for (let j = 0; j < 4; j++) {
-        score += data[i][j];
+        score = score + data[i][j];
       }
     }
     this.setState({ score });

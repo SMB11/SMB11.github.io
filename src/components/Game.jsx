@@ -11,11 +11,13 @@ class Game extends Component {
       [0, 0, 0, 0],
       [0, 0, 2, 0],
       [0, 0, 0, 0]
-    ]
+    ],
+    score: 0
   };
   addValue = () => {
     let options = [];
     let newData = this.state.data;
+    this.updateScore();
     for (let i = 0; i < 4; i++) {
       for (let j = 0; j < 4; j++) {
         if (this.state.data[i][j] === 0) {
@@ -26,7 +28,7 @@ class Game extends Component {
     if (options.length > 0) {
       let randomNum = Math.floor(Math.random() * options.length);
       let randomElement = options[randomNum];
-      newData[randomElement.x][randomElement.y] = randomNum > 2 ? 2 : 4; //TODO: or 4
+      newData[randomElement.x][randomElement.y] = randomNum > 2 ? 2 : 4;
       this.setState({ data: newData });
     } else if (options.length === 0) {
       alert("No more moves");
@@ -78,12 +80,30 @@ class Game extends Component {
     });
   };
 
+  updateScore = () => {
+    let score = this.state.score;
+    let data = this.state.data;
+    for (let i = 0; i < 4; i++) {
+      for (let j = 0; j < 4; j++) {
+        score += data[i][j];
+      }
+    }
+    this.setState({ score });
+  };
+
   render() {
     return (
       <Container>
         <p style={classes.header} align="center">
           2048 Game Smbat Gardilyan
         </p>
+        <Row>
+          <Col>
+            <p align="right" style={classes.score}>
+              Score: {this.state.score}
+            </p>
+          </Col>
+        </Row>
         <Container style={classes.root}>
           {this.state.data.map(col => (
             <Row>

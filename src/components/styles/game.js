@@ -1,7 +1,7 @@
 export const classes = {
   root: {
     flexGrow: 1,
-    height: "100vh",
+    height: "80vh",
     display: "flex",
     justifyContent: "center",
     alignItems: "center"
@@ -16,5 +16,7 @@ export const classes = {
   control: {
     padding: 5
   },
-  header: {}
+  score: {
+    paddingRight: 400
+  }
 };

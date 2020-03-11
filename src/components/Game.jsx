@@ -4,6 +4,8 @@ import { Container, Row, Col } from "reactstrap";
 import { Button } from "@material-ui/core";
 import { classes } from "./styles/game";
 import { rotate, combineUpDown, slideUpDown, checkGame } from "./helpers/game";
+import KeyboardEventHandler from "react-keyboard-event-handler";
+
 class Game extends Component {
   state = {
     data: [
@@ -90,10 +92,30 @@ class Game extends Component {
     }
     this.setState({ score });
   };
+  handleEvents = key => {
+    // console.log(typeof key);
+    switch (key) {
+      case "up":
+        return this.slideUpDownUpdate(this.state.data, "up");
+
+      case "down":
+        return this.slideUpDownUpdate(this.state.data, "down");
+      case "left":
+        return this.slideLeftRightUpdate(this.state.data, "down");
+      case "right":
+        return this.slideLeftRightUpdate(this.state.data, "up");
+      default:
+        return null;
+    }
+  };
 
   render() {
     return (
       <Container>
+        <KeyboardEventHandler
+          handleKeys={["up", "down", "left", "right"]}
+          onKeyEvent={(key, e) => this.handleEvents(key)}
+        />
         <p style={classes.header} align="center">
           2048 Game Smbat Gardilyan
         </p>
@@ -116,32 +138,6 @@ class Game extends Component {
               ))}
             </Row>
           ))}
-          <Button
-            onClick={() => this.slideLeftRightUpdate(this.state.data, "down")}
-          >
-            Left
-          </Button>
-          <Row>
-            <Col>
-              <Button
-                onClick={() => this.slideUpDownUpdate(this.state.data, "up")}
-              >
-                Up
-              </Button>
-            </Col>
-            <Col>
-              <Button
-                onClick={() => this.slideUpDownUpdate(this.state.data, "down")}
-              >
-                Down
-              </Button>
-            </Col>
-          </Row>
-          <Button
-            onClick={() => this.slideLeftRightUpdate(this.state.data, "up")}
-          >
-            Right
-          </Button>
         </Container>
       </Container>
     );

@@ -94,7 +94,7 @@ class LoginPage extends Component {
   isLoggedIn() {
     auth.onAuthStateChanged(user => {
       if (user) {
-        this.props.history.push("/game");
+        this.props.history.push("2048_React/game");
       }
     });
   }

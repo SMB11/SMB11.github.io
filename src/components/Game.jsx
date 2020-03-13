@@ -1,10 +1,13 @@
 import React, { Component } from "react";
 import Paper from "@material-ui/core/Paper";
 import { Container, Row, Col } from "reactstrap";
-import { Button } from "@material-ui/core";
 import { classes } from "./styles/game";
 import { rotate, combineUpDown, slideUpDown, checkGame } from "./helpers/game";
 import KeyboardEventHandler from "react-keyboard-event-handler";
+import { auth } from "./configs/firebase_config";
+import { Button } from "@material-ui/core";
+import { signOut } from "./helpers/loginHelper";
+import Typography from "material-ui/styles/typography";
 
 class Game extends Component {
   state = {
@@ -16,6 +19,16 @@ class Game extends Component {
     ],
     score: 0
   };
+  isLoggedIn() {
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        this.props.history.push("/");
+      }
+    });
+  }
+  componentDidMount() {
+    this.isLoggedIn();
+  }
   addValue = () => {
     let options = [];
     let newData = this.state.data;
@@ -34,6 +47,7 @@ class Game extends Component {
       this.setState({ data: newData });
     } else if (options.length === 0) {
       alert("No more moves");
+      //TODO:add to db
     }
     if (checkGame(this.state.data)) {
       alert("You win");
@@ -123,6 +137,11 @@ class Game extends Component {
           <Col>
             <p align="right" style={classes.score}>
               Score: {this.state.score}
+            </p>
+          </Col>
+          <Col>
+            <p align="right" style={classes.score}>
+              <Button onClick={signOut}>Sign Out</Button>
             </p>
           </Col>
         </Row>

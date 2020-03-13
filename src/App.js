@@ -11,8 +11,8 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route path="2048_React/" component={loginPage} exact />
-        <Route path="2048_React/game" component={Game} exact />
+        <Route path="/2048_React/" component={loginPage} />
+        <Route path="/2048_React/game" component={Game} exact />
       </Switch>
     </Router>
   );

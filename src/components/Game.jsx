@@ -4,21 +4,30 @@ import { Container, Row, Col } from "reactstrap";
 import { classes } from "./styles/game";
 import { rotate, combineUpDown, slideUpDown, checkGame } from "./helpers/game";
 import KeyboardEventHandler from "react-keyboard-event-handler";
-import { auth } from "./configs/firebase_config";
+import { auth, db } from "./configs/firebase_config";
 import { Button } from "@material-ui/core";
 import { signOut } from "./helpers/loginHelper";
+import { getHistory } from "./helpers/firebaseHelper";
+
 import Typography from "material-ui/styles/typography";
 
 class Game extends Component {
-  state = {
-    data: [
-      [0, 0, 0, 0],
-      [0, 0, 0, 0],
-      [0, 0, 2, 0],
-      [0, 0, 0, 0]
-    ],
-    score: 0
-  };
+  state = {};
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      data: [
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 2, 0],
+        [0, 0, 0, 0]
+      ],
+      score: 0,
+      history: []
+    };
+    this.getHistory("KqZE4eorHScT9Rnz6INotzE00ko2");
+  }
   isLoggedIn() {
     auth.onAuthStateChanged(user => {
       if (!user) {
@@ -33,6 +42,7 @@ class Game extends Component {
     let options = [];
     let newData = this.state.data;
     this.updateScore();
+
     for (let i = 0; i < 4; i++) {
       for (let j = 0; j < 4; j++) {
         if (this.state.data[i][j] === 0) {
@@ -106,6 +116,20 @@ class Game extends Component {
     }
     this.setState({ score });
   };
+
+  getHistory = uid => {
+    try {
+      db.ref("scores")
+        .child(uid)
+        .once("value")
+        .then(snapshot => {
+          this.setState({ history: snapshot.val() });
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   handleEvents = key => {
     // console.log(typeof key);
     switch (key) {
@@ -145,7 +169,22 @@ class Game extends Component {
             </p>
           </Col>
         </Row>
+
         <Container style={classes.root}>
+          <Container style={classes.history}>
+            <Row>
+              <Col>
+                <h3>History</h3>
+              </Col>
+            </Row>
+            <Row>
+              {this.state.history.length !== 0
+                ? Object.entries(this.state.history).map(val => (
+                    <Col>{val[0] + "  Score: " + val[1]}</Col>
+                  ))
+                : "NO history"}
+            </Row>
+          </Container>
           {this.state.data.map(col => (
             <Row>
               {col.map(row => (

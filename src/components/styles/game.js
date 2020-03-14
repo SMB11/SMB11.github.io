@@ -18,5 +18,9 @@ export const classes = {
   },
   score: {
     paddingRight: 400
+  },
+  history: {
+    paddingRight: 100,
+    alignItems: "left"
   }
 };

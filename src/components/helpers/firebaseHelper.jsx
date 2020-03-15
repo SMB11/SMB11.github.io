@@ -12,3 +12,17 @@ export function getHistory(uid) {
     console.log(error);
   }
 }
+
+export function updateHistory(uid, score) {
+  var date = new Date();
+  try {
+    db.ref("scores")
+      .child(uid)
+      .update({ [date]: score })
+      .then(() => {
+        alert("Your history is updated, Please refresh your page");
+      });
+  } catch (error) {
+    alert(error);
+  }
+}

@@ -2,12 +2,18 @@ import React, { Component } from "react";
 import Paper from "@material-ui/core/Paper";
 import { Container, Row, Col } from "reactstrap";
 import { classes } from "./styles/game";
-import { rotate, combineUpDown, slideUpDown, checkGame } from "./helpers/game";
+import {
+  rotate,
+  combineUpDown,
+  slideUpDown,
+  checkGame,
+  checkMoves
+} from "./helpers/game";
 import KeyboardEventHandler from "react-keyboard-event-handler";
 import { auth, db } from "./configs/firebase_config";
 import { Button } from "@material-ui/core";
 import { signOut } from "./helpers/loginHelper";
-import { getHistory } from "./helpers/firebaseHelper";
+import { getHistory, updateHistory } from "./helpers/firebaseHelper";
 
 import Typography from "material-ui/styles/typography";
 
@@ -24,19 +30,24 @@ class Game extends Component {
         [0, 0, 0, 0]
       ],
       score: 0,
-      history: []
+      history: [],
+      uid: ""
     };
-    this.getHistory("KqZE4eorHScT9Rnz6INotzE00ko2");
   }
   isLoggedIn() {
     auth.onAuthStateChanged(user => {
       if (!user) {
         this.props.history.push("/");
+      } else {
+        this.setState({ uid: user.uid }, () => {
+          this.getHistory(this.state.uid);
+        });
       }
     });
   }
   componentDidMount() {
     this.isLoggedIn();
+    console.log(this.state.uid);
   }
   addValue = () => {
     let options = [];
@@ -55,8 +66,17 @@ class Game extends Component {
       let randomElement = options[randomNum];
       newData[randomElement.x][randomElement.y] = randomNum > 2 ? 2 : 4;
       this.setState({ data: newData });
-    } else if (options.length === 0) {
+    } else if (options.length === 0 && checkMoves(this.state.data)) {
       alert("No more moves");
+      updateHistory(this.state.uid, this.state.score);
+      this.setState({
+        data: [
+          [0, 0, 0, 0],
+          [0, 0, 0, 0],
+          [0, 0, 2, 0],
+          [0, 0, 0, 0]
+        ]
+      });
       //TODO:add to db
     }
     if (checkGame(this.state.data)) {
@@ -135,7 +155,6 @@ class Game extends Component {
     switch (key) {
       case "up":
         return this.slideUpDownUpdate(this.state.data, "up");
-
       case "down":
         return this.slideUpDownUpdate(this.state.data, "down");
       case "left":
@@ -178,7 +197,7 @@ class Game extends Component {
               </Col>
             </Row>
             <Row>
-              {this.state.history.length !== 0
+              {this.state.history
                 ? Object.entries(this.state.history).map(val => (
                     <Col>{val[0] + "  Score: " + val[1]}</Col>
                   ))

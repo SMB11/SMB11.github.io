@@ -47,3 +47,15 @@ export const checkGame = matrix => {
     }
   }
 };
+export const checkMoves = data => {
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 4; j++) {
+      if (i !== 3 && data[i][j] === data[i + 1][j]) {
+        return false;
+      } else if (j !== 3 && data[i][j] === data[i][j + 1]) {
+        return false;
+      }
+    }
+  }
+  return true;
+};

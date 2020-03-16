@@ -13,9 +13,7 @@ import KeyboardEventHandler from "react-keyboard-event-handler";
 import { auth, db } from "./configs/firebase_config";
 import { Button } from "@material-ui/core";
 import { signOut } from "./helpers/loginHelper";
-import { getHistory, updateHistory } from "./helpers/firebaseHelper";
-
-import Typography from "material-ui/styles/typography";
+import { updateHistory } from "./helpers/firebaseHelper";
 
 class Game extends Component {
   state = {};
